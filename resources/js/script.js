@@ -1,7 +1,7 @@
 let playButton = document.querySelector('#play');
 let stopButton = document.querySelector('#stop');
 let goalDelay = document.querySelector('#goal-delay');
-let goalDelayValue = document.querySelector('.goal-delay-value');
+let goalDelayLabel = document.querySelector('#goal-delay-label');
 let routine = null;
 
 function setup() {
@@ -14,7 +14,7 @@ function setup() {
 window.onload = setup;
 
 goalDelay.onchange = function () {
-    goalDelayValue.textContent = "Goal reset delay " + goalDelay.value + " seconds";
+    goalDelayLabel.textContent = "Goal reset delay: " + goalDelay.value + " seconds";
     routine.setResetTimeInSeconds(goalDelay.value);
 }
 
