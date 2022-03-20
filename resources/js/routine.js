@@ -1,5 +1,5 @@
 class FoosballRoutine {
-    constructor(fbGoals, tbGoals, afterGoalDelay) {
+    constructor(fiveBarOptions, threeBarOptions, afterGoalDelayInSeconds) {
         this.synth = window.speechSynthesis;
 
         this.utterThis = new SpeechSynthesisUtterance();
@@ -8,22 +8,24 @@ class FoosballRoutine {
         this.utterThis.onerror = function () {
             console.error('SpeechSynthesisUtterance.onerror');
         }
-
-        this.utterThis.voice = speechSynthesis
+        let chosenVoice = speechSynthesis
             .getVoices()
             .find(voice => voice.lang.toLowerCase().indexOf("gb") !== -1);
-        console.log(this.utterThis.voice);
+        this.utterThis.voice = chosenVoice;
+        console.log("Using speech synthesis voice '" + chosenVoice + "'.");
+        console.log(this.utterThis);
 
         this.setupTimeout = 3000;
         this.minimumPassDelay = 2000;
         this.minimumShootDelay = 4000;
         this.maxTimeOnFiveBar = 10000;
         this.maxTimeOnThreeBar = 17000;
-        this.fiveBarGoals = fbGoals;
-        this.threeBarGoals = tbGoals;
-        this.resetTime = afterGoalDelay;
+        this.fiveBarGoals = fiveBarOptions;
+        this.threeBarGoals = threeBarOptions;
+        this.resetTimeInSeconds = afterGoalDelayInSeconds;
         this.playing = false;
 
+        this.wakeLockActivated = true;
         this.noSleep = new NoSleep();
     }
 
@@ -32,8 +34,13 @@ class FoosballRoutine {
         this.synth.speak(this.utterThis);
     }
 
-    setResetTimeInSeconds(t) {
-        this.resetTime = t;
+    activateWakeLock(activated) {
+        this.wakeLockActivated = activated;
+        console.log("Wake lock is " + (this.wakeLockActivated ? "activated" : "deactivated"));
+    }
+
+    setResetTimeInSeconds(time) {
+        this.resetTimeInSeconds = time;
     }
 
     getRandomFive() {
@@ -45,7 +52,7 @@ class FoosballRoutine {
     }
 
     endRoutine() {
-        this.speak("You are done!");
+        console.log("Ending routine.");
     }
 
     setCancellableTimeout(fun, interval) {
@@ -66,7 +73,7 @@ class FoosballRoutine {
     }
 
     shoot(obj) {
-        obj.speakAndSchedule(obj.getRandomThree(), obj.readyFive, obj.resetTime * 1000);
+        obj.speakAndSchedule(obj.getRandomThree(), obj.readyFive, obj.resetTimeInSeconds * 1000);
     }
 
     pass(obj) {
@@ -78,18 +85,28 @@ class FoosballRoutine {
     }
 
     readyFive(obj) {
-        obj.speakAndSchedule("setup five bar", obj.startFiveBar, obj.setupTimeout);
+        obj.speakAndSchedule("setup 5-bar", obj.startFiveBar, obj.setupTimeout);
     }
 
     start() {
         this.playing = true;
-        // noinspection JSCheckFunctionSignatures
-        this.noSleep.enable();
+        this.enableWakeLock();
         this.readyFive(this);
     }
 
     stop() {
         this.playing = false;
+        this.disableWakeLock();
+    }
+
+    enableWakeLock() {
+        if (this.wakeLockActivated) {
+            // noinspection JSCheckFunctionSignatures
+            this.noSleep.enable();
+        }
+    }
+
+    disableWakeLock() {
         // noinspection JSCheckFunctionSignatures
         this.noSleep.disable();
     }

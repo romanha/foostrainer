@@ -4,6 +4,7 @@ body, html {
 
 html {
     height: 100%;
+    font-family: sans-serif;
 }
 
 body {
@@ -12,10 +13,8 @@ body {
     margin: 0 auto;
 }
 
-h1, p {
-    font-family: sans-serif;
+h1, h2, h3, h4, p {
     text-align: center;
-    padding: 10px;
 }
 
 p {
@@ -39,22 +38,36 @@ select {
 }
 
 form > div {
-    width: 81%;
-}
-
-.txt, form > div {
+    width: 80%;
     margin-bottom: 10px;
     overflow: auto;
 }
 
-.clearfix {
-    clear: both;
+label {
+    width: 100%;
+    line-height: 1.5;
 }
 
-label {
-    float: left;
-    width: 50%;
-    line-height: 1.5;
+#start-training {
+    width: 5em;
+    background-color: #4CAF50;
+    border: none;
+    border-radius: 0.3em;
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+#stop-training {
+    width: 5em;
+    background-color: #f44336;
+    border: none;
+    border-radius: 0.3em;
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+.section {
+    margin-top: 2.5em;
 }
 
 #goal-delay {
@@ -62,11 +75,20 @@ label {
     width: 80%;
 }
 
-.controls {
+#controls {
     text-align: center;
-    margin-top: 10px;
 }
 
-.controls button {
+.control-element {
+    width: 50%;
+    display: inline;
+    text-align: center;
+}
+
+.control-element button {
     padding: 10px;
+}
+
+.settings-element {
+    text-align: center;
 }

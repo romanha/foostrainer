@@ -1,14 +1,17 @@
-let playButton = document.querySelector('#play');
-let stopButton = document.querySelector('#stop');
+let startButton = document.querySelector('#start-training');
+let stopButton = document.querySelector('#stop-training');
+let wakeLock = document.querySelector('#wake-lock');
 let goalDelay = document.querySelector('#goal-delay');
 let goalDelayLabel = document.querySelector('#goal-delay-label');
 let routine = null;
 
 function setup() {
-    document.getElementById("stop").disabled = true;
-    routine = new FoosballRoutine(["wall pass", "lane pass", "center pass"],
-        ["long left", "short left", "straight", "short right", "long right", "cut back left", "cut back right"],
-        5);
+    stopButton.disabled = true;
+    routine = new FoosballRoutine(
+        ["wall pass", "lane pass", "center pass"],
+        ["long left", "short left", "straight", "short right", "long right", "cut-back left", "cut-back right"],
+        5
+    );
 }
 
 window.onload = setup;
@@ -18,16 +21,20 @@ goalDelay.onchange = function () {
     routine.setResetTimeInSeconds(goalDelay.value);
 }
 
-playButton.onclick = function (event) {
+wakeLock.onchange = function () {
+    routine.activateWakeLock(wakeLock.checked);
+}
+
+startButton.onclick = function (event) {
     event.preventDefault();
-    document.getElementById("play").disabled = true;
-    document.getElementById("stop").disabled = false;
+    startButton.disabled = true;
+    stopButton.disabled = false;
     routine.start();
 }
 
 stopButton.onclick = function (event) {
     event.preventDefault();
-    document.getElementById("play").disabled = false;
-    document.getElementById("stop").disabled = true;
+    startButton.disabled = false;
+    stopButton.disabled = true;
     routine.stop();
 }

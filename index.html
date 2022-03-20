@@ -15,30 +15,45 @@
 
 <h1>Foosball Routine</h1>
 
-<p id="instructions">
+<p id="instructions" class="section">
     Put the ball into play on your 5 bar.<br/>
-    Click the "Start training" button.<br/>
-    As soon as you hear "Go", start moving the ball on your 5 bar.<br/>
+    Click the "Start" button.<br/>
+    Start moving the ball on your 5 bar.<br/>
     Follow the instructions!
 </p>
 
-<form>
-    <div class="controls">
-        <button id="play" type="button">Start training</button>
-    </div>
-    <div class="controls">
-        <button id="stop" type="button">Stop training</button>
-    </div>
-    <div class="controls">
-        <label id="goal-delay-label" for="goal-delay">Goal reset delay: 5 seconds</label>
-        <input id="goal-delay" max="10" min="1" step="1" type="range" value="5">
-    </div>
-</form>
+<div id="controls" class="section">
+    <form>
+        <div class="control-element">
+            <button id="start-training" type="button">START</button>
+        </div>
+        <div class="control-element">
+            <button id="stop-training" type="button">STOP</button>
+        </div>
+    </form>
+</div>
 
-<p>
-    Passes: "wall pass", "lane pass", "center pass"<br/>
-    Shots: "long left", "short left", "straight", "short right", "long right", "cut back left", "cut back right"
-</p>
+<div id="settings" class="section">
+    <h2>Settings</h2>
+    <form>
+        <div class="settings-element">
+            <input id="wake-lock" type="checkbox" checked>
+            <label id="wake-lock-label" for="wake-lock">Prevent display sleep (mobile)</label>
+        </div>
+        <div class="settings-element">
+            <label id="goal-delay-label" for="goal-delay">Goal reset delay: 5 seconds</label>
+            <input id="goal-delay" type="range" max="10" min="1" step="1" value="5">
+        </div>
+    </form>
+</div>
+
+<div id="options" class="section">
+    <h2>Options</h2>
+    <h3>Passes</h3>
+    <p>"wall pass", "lane pass", "center pass"</p>
+    <h3>Shots</h3>
+    <p>"long left", "short left", "straight", "short right", "long right", "cut back left", "cut back right"</p>
+</div>
 
 <div id="footer">
     <p>
