@@ -10,7 +10,7 @@ html {
 body {
     height: 90%;
     max-width: 800px;
-    margin: 0 auto;
+    margin: 3em auto;
 }
 
 h1, h2, h3, h4, p {
@@ -48,7 +48,25 @@ label {
     line-height: 1.5;
 }
 
-#start-training {
+.collapsible-button {
+    background-color: #777777;
+    color: white;
+    font-size: 1.3em;
+    text-align: center;
+    padding: 1em;
+    width: 100%;
+    border: none;
+    outline: none;
+}
+
+.collapsible-content {
+    padding: 1.5em 0;
+    display: none;
+    overflow: hidden;
+    background-color: #f1f1f1;
+}
+
+#start-training-button {
     width: 5em;
     background-color: #4CAF50;
     border: none;
@@ -57,7 +75,7 @@ label {
     font-weight: bold;
 }
 
-#stop-training {
+#stop-training-button {
     width: 5em;
     background-color: #f44336;
     border: none;
@@ -66,16 +84,13 @@ label {
     font-weight: bold;
 }
 
-.section {
-    margin-top: 2.5em;
-}
-
 #goal-delay {
     alignment: center;
     width: 80%;
 }
 
 #controls {
+    margin-bottom: 2.5em;
     text-align: center;
 }
 
@@ -91,4 +106,8 @@ label {
 
 .settings-element {
     text-align: center;
+}
+
+#footer {
+    margin-top: 1em;
 }
