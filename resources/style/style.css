@@ -69,19 +69,31 @@ label {
 #start-training-button {
     width: 5em;
     background-color: #4CAF50;
+    color: black;
     border: none;
     border-radius: 0.3em;
     font-size: 1.2em;
     font-weight: bold;
 }
 
+#start-training-button.disabled {
+    background-color: #95e099;
+    color: grey;
+}
+
 #stop-training-button {
     width: 5em;
     background-color: #f44336;
+    color: black;
     border: none;
     border-radius: 0.3em;
     font-size: 1.2em;
     font-weight: bold;
+}
+
+#stop-training-button.disabled {
+    background-color: #ffaea9;
+    color: grey;
 }
 
 #goal-delay {

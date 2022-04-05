@@ -8,9 +8,9 @@ let stopButton = document.getElementById("stop-training-button");
 // Settings
 let settingsButton = document.getElementById("settings-button")
 let routineButton = document.getElementById("routine-button")
-let wakeLock = document.querySelector('#wake-lock');
-let goalDelay = document.querySelector('#goal-delay');
-let goalDelayLabel = document.querySelector('#goal-delay-label');
+let wakeLock = document.getElementById("wake-lock");
+let goalDelay = document.getElementById("goal-delay");
+let goalDelayLabel = document.getElementById("goal-delay-label");
 
 function setup() {
     stopButton.disabled = true;
@@ -57,13 +57,17 @@ wakeLock.onchange = function () {
 startButton.onclick = function (event) {
     event.preventDefault();
     startButton.disabled = true;
+    startButton.classList.add("disabled");
     stopButton.disabled = false;
+    stopButton.classList.remove("disabled");
     routine.start();
 }
 
 stopButton.onclick = function (event) {
     event.preventDefault();
     startButton.disabled = false;
+    startButton.classList.remove("disabled");
     stopButton.disabled = true;
+    stopButton.classList.add("disabled");
     routine.stop();
 }
