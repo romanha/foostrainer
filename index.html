@@ -7,7 +7,7 @@
 
     <title>Foosball Routine</title>
 
-    <link href="resources/style/style.css?3" rel="stylesheet">
+    <link href="resources/style/style.css" rel="stylesheet">
     <script src="resources/js/lib/NoSleep.min.js"></script>
 </head>
 
@@ -53,14 +53,61 @@
     <button id="routine-button" type="button" class="collapsible-button">&blacktriangleright; Routine</button>
     <div id="routine" class="collapsible-content">
         <h3>Passes</h3>
-        <p>"wall pass", "lane pass", "center pass"</p>
+        <form>
+            <div class="multiline-checkboxes">
+                <div class="routine-element">
+                    <input id="routine-pass-wall" type="checkbox" checked>
+                    <label id="routine-pass-wall-label" for="routine-pass-wall">Wall pass</label>
+                </div>
+                <div class="routine-element">
+                    <input id="routine-pass-lane" type="checkbox" checked>
+                    <label id="routine-pass-lane-label" for="routine-pass-lane">Lane pass</label>
+                </div>
+                <div class="routine-element">
+                    <input id="routine-pass-center" type="checkbox">
+                    <label id="routine-pass-center-label" for="routine-pass-center">Center pass</label>
+                </div>
+            </div>
+        </form>
         <h3>Shots</h3>
-        <p>"long left", "short left", "straight", "short right", "long right", "cut back left", "cut back right"</p>
+        <form>
+            <div class="multiline-checkboxes">
+                <div class="routine-element">
+                    <input id="routine-shot-straight" type="checkbox" checked>
+                    <label id="routine-shot-straight-label" for="routine-shot-straight">Straight</label>
+                </div>
+                <div class="routine-element">
+                    <input id="routine-shot-long-left" type="checkbox" checked>
+                    <label id="routine-shot-long-left-label" for="routine-shot-long-left">Long left</label>
+                </div>
+                <div class="routine-element">
+                    <input id="routine-shot-long-right" type="checkbox" checked>
+                    <label id="routine-shot-long-right-label" for="routine-shot-long-right">Long right</label>
+                </div>
+                <div class="routine-element">
+                    <input id="routine-shot-short-left" type="checkbox" checked>
+                    <label id="routine-shot-short-left-label" for="routine-shot-short-left">Short left</label>
+                </div>
+                <div class="routine-element">
+                    <input id="routine-shot-short-right" type="checkbox" checked>
+                    <label id="routine-shot-short-right-label" for="routine-shot-short-right">Short right</label>
+                </div>
+                <div class="routine-element">
+                    <input id="routine-shot-cut-back-left" type="checkbox">
+                    <label id="routine-shot-cut-back-left-label" for="routine-shot-cut-back-left">Cut-back left</label>
+                </div>
+                <div class="routine-element">
+                    <input id="routine-shot-cut-back-right" type="checkbox">
+                    <label id="routine-shot-cut-back-right-label" for="routine-shot-cut-back-right">Cut-back right</label>
+                </div>
+            </div>
+        </form>
     </div>
 </div>
 
 <footer id="footer">
     <p>
+        <a href="https://github.com/romanha/foostrainer/blob/main/LICENSE" target="_blank">License</a> &bull;
         <a href="https://github.com/romanha/foostrainer" target="_blank">Code on GitHub</a><br/>
         <a href="https://github.com/bitkid/foostrainer" target="_blank">Based on bitkid's Foostrainer</a>
     </p>
@@ -69,7 +116,7 @@
     </p>
 </footer>
 
-<script src="resources/js/routine.js?25"></script>
-<script src="resources/js/script.js?25"></script>
+<script src="resources/js/routine.js"></script>
+<script src="resources/js/script.js"></script>
 </body>
 </html>

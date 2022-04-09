@@ -120,6 +120,12 @@ label {
     text-align: center;
 }
 
+.multiline-checkboxes {
+    margin-left: auto;
+    margin-right: auto;
+    width: fit-content;
+}
+
 #footer {
     margin-top: 1em;
 }

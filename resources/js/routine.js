@@ -52,6 +52,7 @@ class FoosballRoutine {
     }
 
     endRoutine() {
+        this.synth.cancel();
         console.log("Ending routine.");
     }
 
@@ -81,11 +82,11 @@ class FoosballRoutine {
     }
 
     startFiveBar(obj) {
-        obj.speakAndSchedule("go", obj.pass, Math.max(Math.random() * obj.maxTimeOnFiveBar, obj.minimumPassDelay));
+        obj.speakAndSchedule("Go.", obj.pass, Math.max(Math.random() * obj.maxTimeOnFiveBar, obj.minimumPassDelay));
     }
 
     readyFive(obj) {
-        obj.speakAndSchedule("setup 5-bar", obj.startFiveBar, obj.setupTimeout);
+        obj.speakAndSchedule("Setup 5-bar.", obj.startFiveBar, obj.setupTimeout);
     }
 
     start() {
