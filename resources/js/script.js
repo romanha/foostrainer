@@ -33,6 +33,19 @@ function isAppInitialized() {
     return routine !== null;
 }
 
+// Checks if the browser supports the voices changed event.
+// See: https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesis/voiceschanged_event
+function isBrowserSupportingVoicesChangedEvent() {
+    let isSupported = true;
+    let userAgent = navigator.userAgent;
+    if ((userAgent.indexOf("Opera") || userAgent.indexOf("OPR") || userAgent.indexOf("Safari")) === -1) {
+        console.log("The 'voices changed event' is not supported for '" + userAgent + "'.");
+        isSupported = false;
+    }
+
+    return isSupported;
+}
+
 function setup() {
     // in case initializeRoutine() is already executed before setup()
     if (!isAppInitialized()) {
@@ -42,6 +55,11 @@ function setup() {
 
     stopButton.disabled = true;
     stopButton.classList.add("disabled");
+
+    if (!isBrowserSupportingVoicesChangedEvent()) {
+        // If the event is not supported, just wait 1 second. This should be more than enough to load all the voices.
+        setTimeout(initializeRoutine, 1000);
+    }
 }
 
 function getFiveBarOptions() {
