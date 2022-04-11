@@ -48,6 +48,10 @@ label {
     line-height: 1.5;
 }
 
+.hidden {
+    display: none !important;
+}
+
 .collapsible-button {
     background-color: #777777;
     color: white;

@@ -1,5 +1,5 @@
 class FoosballRoutine {
-    constructor(fiveBarOptions, threeBarOptions, afterGoalDelayInSeconds) {
+    constructor(fiveBarOptions, threeBarOptions, afterGoalDelayInSeconds, availableVoices) {
         this.synth = window.speechSynthesis;
 
         this.utterThis = new SpeechSynthesisUtterance();
@@ -8,12 +8,7 @@ class FoosballRoutine {
         this.utterThis.onerror = function () {
             console.error('SpeechSynthesisUtterance.onerror');
         }
-        let chosenVoice = speechSynthesis
-            .getVoices()
-            .find(voice => voice.lang.toLowerCase().indexOf("gb") !== -1);
-        this.utterThis.voice = chosenVoice;
-        console.log("Using speech synthesis voice '" + chosenVoice + "'.");
-        console.log(this.utterThis);
+        this.utterThis.voice = availableVoices.find(voice => voice.lang.toLowerCase().indexOf("gb") !== -1);
 
         this.setupTimeout = 3000;
         this.minimumPassDelay = 2000;
@@ -27,6 +22,10 @@ class FoosballRoutine {
 
         this.wakeLockActivated = true;
         this.noSleep = new NoSleep();
+
+        console.log("Using speech synthesis voice '" + this.utterThis.voice.name + "'.");
+        console.log("Using 5-bar options: ", this.fiveBarGoals);
+        console.log("Using 3-bar options: ", this.threeBarGoals);
     }
 
     speak(myTxt) {
@@ -53,7 +52,6 @@ class FoosballRoutine {
 
     endRoutine() {
         this.synth.cancel();
-        console.log("Ending routine.");
     }
 
     setCancellableTimeout(fun, interval) {
@@ -90,12 +88,14 @@ class FoosballRoutine {
     }
 
     start() {
+        console.log("Starting routine.");
         this.playing = true;
         this.enableWakeLock();
         this.readyFive(this);
     }
 
     stop() {
+        console.log("Ending routine.");
         this.playing = false;
         this.disableWakeLock();
     }

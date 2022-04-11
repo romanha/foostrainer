@@ -4,6 +4,7 @@ let routine = null;
 // Control elements
 let startButton = document.getElementById("start-training-button");
 let stopButton = document.getElementById("stop-training-button");
+let loadingSpinner = document.getElementById("loading-spinner");
 
 // Settings
 let settingsButton = document.getElementById("settings-button")
@@ -12,18 +13,106 @@ let wakeLock = document.getElementById("wake-lock");
 let goalDelay = document.getElementById("goal-delay");
 let goalDelayLabel = document.getElementById("goal-delay-label");
 
-function setup() {
-    stopButton.disabled = true;
-    routine = new FoosballRoutine(
-        ["wall pass", "lane pass", "center pass"],
-        ["long left", "short left", "straight", "short right", "long right", "cut-back left", "cut-back right"],
-        5
-    );
+// Checkbox IDs mapped to text
+const fiveBarOptionsToTextMap = new Map([
+    ["routine-pass-wall", "Wall pass."],
+    ["routine-pass-lane", "Lane pass."],
+    ["routine-pass-center", "Center pass."]
+]);
+const threeBarOptionsToTextMap = new Map([
+    ["routine-shot-straight", "Straight."],
+    ["routine-shot-long-left", "Long left."],
+    ["routine-shot-long-right", "Long right."],
+    ["routine-shot-short-left", "Short left."],
+    ["routine-shot-short-right", "Short right."],
+    ["routine-shot-cut-back-left", "Cut-back left."],
+    ["routine-shot-cut-back-right", "Cut-back right."]
+]);
+
+function isAppInitialized() {
+    return routine !== null;
 }
 
-window.onload = setup;
+function setup() {
+    // in case initializeRoutine() is already executed before setup()
+    if (!isAppInitialized()) {
+        startButton.disabled = true;
+        startButton.classList.add("disabled");
+    }
 
-settingsButton.onclick = function () {
+    stopButton.disabled = true;
+    stopButton.classList.add("disabled");
+}
+
+function getFiveBarOptions() {
+    let fiveBarOptions = [];
+    fiveBarOptionsToTextMap.forEach((text, checkboxId) => {
+        if (document.getElementById(checkboxId).checked) {
+            fiveBarOptions.push(text);
+        }
+    });
+
+    if (fiveBarOptions.length === 0) {
+        fiveBarOptionsToTextMap.forEach(text => fiveBarOptions.push(text));
+    }
+
+    return fiveBarOptions;
+}
+
+function getThreeBarOptions() {
+    let threeBarOptions = [];
+    threeBarOptionsToTextMap.forEach((text, checkboxId) => {
+        if (document.getElementById(checkboxId).checked) {
+            threeBarOptions.push(text);
+        }
+    });
+
+    if (threeBarOptions.length === 0) {
+        threeBarOptionsToTextMap.forEach(text => threeBarOptions.push(text));
+    }
+
+    return threeBarOptions;
+}
+
+function initializeRoutine() {
+    if (!isAppInitialized()) {
+        console.log("Initializing routine.")
+        let availableVoices = window.speechSynthesis.getVoices();
+        routine = new FoosballRoutine(
+            getFiveBarOptions(),
+            getThreeBarOptions(),
+            5,
+            availableVoices
+        );
+        loadingSpinner.classList.add("hidden");
+        startButton.disabled = false;
+        startButton.classList.remove("disabled");
+    }
+}
+
+function reinitializeRoutine() {
+    stopRoutine();
+    routine = null;
+    initializeRoutine();
+}
+
+function startRoutine() {
+    startButton.disabled = true;
+    startButton.classList.add("disabled");
+    stopButton.disabled = false;
+    stopButton.classList.remove("disabled");
+    routine.start();
+}
+
+function stopRoutine() {
+    startButton.disabled = false;
+    startButton.classList.remove("disabled");
+    stopButton.disabled = true;
+    stopButton.classList.add("disabled");
+    routine.stop();
+}
+
+function expandSettings() {
     let settingsMenu = document.getElementById("settings");
     if (settingsMenu.style.display === "block") {
         settingsButton.innerHTML = "&blacktriangleright; Settings";
@@ -34,7 +123,7 @@ settingsButton.onclick = function () {
     }
 }
 
-routineButton.onclick = function () {
+function expandRoutineOptions() {
     let routineMenu = document.getElementById("routine");
     if (routineMenu.style.display === "block") {
         routineButton.innerHTML = "&blacktriangleright; Routine";
@@ -45,6 +134,17 @@ routineButton.onclick = function () {
     }
 }
 
+window.onload = setup;
+window.speechSynthesis.onvoiceschanged = initializeRoutine;
+startButton.onclick = startRoutine;
+stopButton.onclick = stopRoutine;
+settingsButton.onclick = expandSettings;
+routineButton.onclick = expandRoutineOptions;
+
+// React on click of any routine option checkbox.
+document.querySelectorAll(".multiline-checkboxes > .routine-element > input")
+    .forEach(checkbox => checkbox.onclick = reinitializeRoutine);
+
 goalDelay.onchange = function () {
     goalDelayLabel.textContent = "Goal reset delay: " + goalDelay.value + " seconds";
     routine.setResetTimeInSeconds(goalDelay.value);
@@ -52,22 +152,4 @@ goalDelay.onchange = function () {
 
 wakeLock.onchange = function () {
     routine.activateWakeLock(wakeLock.checked);
-}
-
-startButton.onclick = function (event) {
-    event.preventDefault();
-    startButton.disabled = true;
-    startButton.classList.add("disabled");
-    stopButton.disabled = false;
-    stopButton.classList.remove("disabled");
-    routine.start();
-}
-
-stopButton.onclick = function (event) {
-    event.preventDefault();
-    startButton.disabled = false;
-    startButton.classList.remove("disabled");
-    stopButton.disabled = true;
-    stopButton.classList.add("disabled");
-    routine.stop();
 }

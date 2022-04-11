@@ -8,6 +8,7 @@
     <title>Foosball Routine</title>
 
     <link href="resources/style/style.css" rel="stylesheet">
+    <link href="resources/style/loading-spinner.css" rel="stylesheet">
     <script src="resources/js/lib/NoSleep.min.js"></script>
 </head>
 
@@ -32,6 +33,9 @@
         </div>
     </form>
 </div>
+
+<!-- The loading spinner is only shown until the app has loaded the speech synthesis voices. -->
+<div id="loading-spinner"></div>
 
 <div id="settings-container" class="section">
     <button id="settings-button" type="button" class="collapsible-button">&blacktriangleright; Settings</button>
