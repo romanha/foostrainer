@@ -99,7 +99,7 @@ function initializeRoutine() {
         routine = new FoosballRoutine(
             getFiveBarOptions(),
             getThreeBarOptions(),
-            5,
+            goalDelay.value,
             availableVoices
         );
         loadingSpinner.classList.add("hidden");
@@ -165,9 +165,9 @@ document.querySelectorAll(".multiline-checkboxes > .routine-element > input")
 
 goalDelay.onchange = function () {
     goalDelayLabel.textContent = "Goal reset delay: " + goalDelay.value + " seconds";
-    routine.setResetTimeInSeconds(goalDelay.value);
+    routine.updateAfterGoalDelay(goalDelay.value);
 }
 
 wakeLock.onchange = function () {
-    routine.activateWakeLock(wakeLock.checked);
+    routine.updateWakeLockActivation(wakeLock.checked);
 }

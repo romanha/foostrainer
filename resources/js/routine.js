@@ -1,107 +1,147 @@
 class FoosballRoutine {
     constructor(fiveBarOptions, threeBarOptions, afterGoalDelayInSeconds, availableVoices) {
+
+        // internal settings
+        this.isCurrentlyPlaying = false;
         this.synth = window.speechSynthesis;
 
         this.utterThis = new SpeechSynthesisUtterance();
+        this.utterThis.voice = availableVoices.find(voice => voice.lang.toLowerCase().indexOf("gb") !== -1);
         this.utterThis.pitch = 1;
         this.utterThis.rate = 1;
         this.utterThis.onerror = function () {
             console.error('SpeechSynthesisUtterance.onerror');
         }
-        this.utterThis.voice = availableVoices.find(voice => voice.lang.toLowerCase().indexOf("gb") !== -1);
 
-        this.setupTimeout = 3000;
-        this.minimumPassDelay = 2000;
-        this.minimumShootDelay = 4000;
-        this.maxTimeOnFiveBar = 10000;
-        this.maxTimeOnThreeBar = 17000;
-        this.fiveBarGoals = fiveBarOptions;
-        this.threeBarGoals = threeBarOptions;
-        this.resetTimeInSeconds = afterGoalDelayInSeconds;
-        this.playing = false;
+        this.timeForSettingUpOnFiveBarInSeconds = 3;
+        this.minimumTimeForPassingInSeconds = 2;
+        this.maximumTimeForPassingInSeconds = 9; // legal maximum is 10s (9s also considers the spoken text)
+        this.minimumTimeForShootingInSeconds = 4;
+        this.maximumTimeForShootingInSeconds = 14; // legal maximum is 15s (14s also considers the spoken text)
 
-        this.wakeLockActivated = true;
+        // configurable settings
+        this.fiveBarOptions = fiveBarOptions;
+        this.threeBarOptions = threeBarOptions;
+        this.afterGoalDelayInSeconds = afterGoalDelayInSeconds;
+        this.isWakeLockActivated = true;
         this.noSleep = new NoSleep();
 
         console.log("Using speech synthesis voice '" + this.utterThis.voice.name + "'.");
-        console.log("Using 5-bar options: ", this.fiveBarGoals);
-        console.log("Using 3-bar options: ", this.threeBarGoals);
+        console.log("Using 5-bar options: ", this.fiveBarOptions);
+        console.log("Using 3-bar options: ", this.threeBarOptions);
     }
 
-    speak(myTxt) {
-        this.utterThis.text = myTxt;
+    // Methods for controlling the routine from the outside.
+
+    /**
+     * Start the routine.
+     */
+    start() {
+        console.log("Starting routine.");
+        this.isCurrentlyPlaying = true;
+        this.enableWakeLock();
+        this.setupFiveBarAction(this);
+    }
+
+    /**
+     * Stop the routine.
+     */
+    stop() {
+        console.log("Ending routine.");
+        this.isCurrentlyPlaying = false;
+        this.disableWakeLock();
+    }
+
+    /**
+     * Update the wake lock activation during an already started routine.
+     */
+    updateWakeLockActivation(activated) {
+        this.isWakeLockActivated = activated;
+        console.log("Wake lock is " + (this.isWakeLockActivated ? "activated" : "deactivated"));
+    }
+
+    /**
+     * Update the time to reset the ball after a goal during an already started routine.
+     */
+    updateAfterGoalDelay(timeInSeconds) {
+        this.afterGoalDelayInSeconds = timeInSeconds;
+        console.log("Delaying after a goal for " + this.afterGoalDelayInSeconds + " seconds");
+    }
+
+    // Internal methods.
+
+    setupFiveBarAction(routine) {
+        routine.speakAndSchedule(
+            "Setup 5-bar.",
+            routine.startFiveBarAction,
+            routine.timeForSettingUpOnFiveBarInSeconds
+        );
+    }
+
+    startFiveBarAction(routine) {
+        let timeout = (Math.random() * (routine.maximumTimeForPassingInSeconds - routine.minimumTimeForPassingInSeconds)) + routine.minimumTimeForPassingInSeconds;
+        routine.speakAndSchedule(
+            "Go.",
+            routine.passAction,
+            timeout
+        );
+    }
+
+    passAction(routine) {
+        let timeout = (Math.random() * (routine.maximumTimeForShootingInSeconds - routine.minimumTimeForShootingInSeconds)) + routine.minimumTimeForShootingInSeconds;
+        routine.speakAndSchedule(
+            routine.getRandomFiveBarOption(),
+            routine.shootAction,
+            timeout
+        );
+    }
+
+    shootAction(routine) {
+        routine.speakAndSchedule(
+            routine.getRandomThreeBarOption(),
+            routine.setupFiveBarAction,
+            routine.afterGoalDelayInSeconds
+        );
+    }
+
+    speakAndSchedule(text, nextActionToSchedule, timeoutUntilNextActionInSeconds) {
+        if (this.isCurrentlyPlaying) {
+            this.speak(text)
+            this.setCancellableTimeout(nextActionToSchedule, timeoutUntilNextActionInSeconds);
+            console.log("Scheduled " + nextActionToSchedule.name + " in " + timeoutUntilNextActionInSeconds + " seconds")
+        } else {
+            this.endRoutine();
+        }
+    }
+
+    speak(text) {
+        // Change the utterance text and add the new text to the speech synthesis queue.
+        this.utterThis.text = text;
         this.synth.speak(this.utterThis);
     }
 
-    activateWakeLock(activated) {
-        this.wakeLockActivated = activated;
-        console.log("Wake lock is " + (this.wakeLockActivated ? "activated" : "deactivated"));
+    setCancellableTimeout(nextActionToSchedule, timeoutUntilNextActionInSeconds) {
+        if (this.isCurrentlyPlaying) {
+            setTimeout(nextActionToSchedule, timeoutUntilNextActionInSeconds * 1000, this);
+        } else {
+            this.endRoutine();
+        }
     }
 
-    setResetTimeInSeconds(time) {
-        this.resetTimeInSeconds = time;
+    getRandomFiveBarOption() {
+        return this.fiveBarOptions[Math.floor(Math.random() * this.fiveBarOptions.length)];
     }
 
-    getRandomFive() {
-        return this.fiveBarGoals[Math.floor(Math.random() * this.fiveBarGoals.length)];
-    }
-
-    getRandomThree() {
-        return this.threeBarGoals[Math.floor(Math.random() * this.threeBarGoals.length)];
+    getRandomThreeBarOption() {
+        return this.threeBarOptions[Math.floor(Math.random() * this.threeBarOptions.length)];
     }
 
     endRoutine() {
         this.synth.cancel();
     }
 
-    setCancellableTimeout(fun, interval) {
-        if (!this.playing) {
-            this.endRoutine();
-        } else {
-            setTimeout(fun, interval, this);
-        }
-    }
-
-    speakAndSchedule(txt, fun, interval) {
-        if (!this.playing) {
-            this.endRoutine();
-        } else {
-            this.speak(txt)
-            this.setCancellableTimeout(fun, interval);
-        }
-    }
-
-    shoot(obj) {
-        obj.speakAndSchedule(obj.getRandomThree(), obj.readyFive, obj.resetTimeInSeconds * 1000);
-    }
-
-    pass(obj) {
-        obj.speakAndSchedule(obj.getRandomFive(), obj.shoot, Math.max(Math.random() * obj.maxTimeOnThreeBar, obj.minimumShootDelay));
-    }
-
-    startFiveBar(obj) {
-        obj.speakAndSchedule("Go.", obj.pass, Math.max(Math.random() * obj.maxTimeOnFiveBar, obj.minimumPassDelay));
-    }
-
-    readyFive(obj) {
-        obj.speakAndSchedule("Setup 5-bar.", obj.startFiveBar, obj.setupTimeout);
-    }
-
-    start() {
-        console.log("Starting routine.");
-        this.playing = true;
-        this.enableWakeLock();
-        this.readyFive(this);
-    }
-
-    stop() {
-        console.log("Ending routine.");
-        this.playing = false;
-        this.disableWakeLock();
-    }
-
     enableWakeLock() {
-        if (this.wakeLockActivated) {
+        if (this.isWakeLockActivated) {
             // noinspection JSCheckFunctionSignatures
             this.noSleep.enable();
         }
