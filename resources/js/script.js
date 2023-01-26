@@ -21,6 +21,8 @@ const fiveBarOptionsToTextMap = new Map([
 ]);
 const threeBarOptionsToTextMap = new Map([
     ["routine-shot-straight", "Straight."],
+    ["routine-shot-left", "Left."],
+    ["routine-shot-right", "Right."],
     ["routine-shot-long-left", "Long left."],
     ["routine-shot-long-right", "Long right."],
     ["routine-shot-short-left", "Short left."],

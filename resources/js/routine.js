@@ -3,6 +3,7 @@ class FoosballRoutine {
 
         // internal settings
         this.isCurrentlyPlaying = false;
+        this.lastTimeoutId = null;
         this.synth = window.speechSynthesis;
 
         this.utterThis = new SpeechSynthesisUtterance();
@@ -49,7 +50,9 @@ class FoosballRoutine {
     stop() {
         console.log("Ending routine.");
         this.isCurrentlyPlaying = false;
+        this.synth.cancel();
         this.disableWakeLock();
+        this.clearLastTimeout();
     }
 
     /**
@@ -122,7 +125,7 @@ class FoosballRoutine {
 
     setCancellableTimeout(nextActionToSchedule, timeoutUntilNextActionInSeconds) {
         if (this.isCurrentlyPlaying) {
-            setTimeout(nextActionToSchedule, timeoutUntilNextActionInSeconds * 1000, this);
+            this.lastTimeoutId = setTimeout(nextActionToSchedule, timeoutUntilNextActionInSeconds * 1000, this);
         } else {
             this.endRoutine();
         }
@@ -138,6 +141,15 @@ class FoosballRoutine {
 
     endRoutine() {
         this.synth.cancel();
+        this.clearLastTimeout();
+    }
+
+    clearLastTimeout() {
+        if (this.lastTimeoutId) {
+            clearTimeout(this.lastTimeoutId);
+            console.log("Cleared timeout with ID '" + this.lastTimeoutId + "'.");
+            this.lastTimeoutId = null;
+        }
     }
 
     enableWakeLock() {
